@@ -28,7 +28,7 @@ export async function MainNav({
           </SignInButton>
         )}
         <Link href="/">
-          <h3 className="text-xl font-bold text-primary">Pluto's Pizza</h3>
+          <h3 className="text-xl font-bold text-primary">Plutos Pizza</h3>
         </Link>
         <Link
           href="/order"

@@ -8,7 +8,7 @@ export default function HomePage() {
         className="text-4xl font-bold text-center
       text-primary"
       >
-        Welcome to Pluto's Pizza!
+        Welcome to Plutos Pizza!
       </h1>
       <Button className="mt-4">
         <Link href="/order">Order Now</Link>

@@ -25,7 +25,7 @@ export default function Cart() {
                 key={item.id}
                 initial={{ opacity: 0, x: -100 }}
                 animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 100 }} // Define the exit animation
+                exit={{ opacity: 0, x: 100 }} 
                 transition={{ type: "spring", stiffness: 900, damping: 40 }}
               >
                 {item.quantity} {item.size} {item.toppings.join(", ")} - £{" "}
