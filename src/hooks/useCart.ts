@@ -3,7 +3,7 @@ import { persist, createJSONStorage } from "zustand/middleware";
 import { Pizza } from "@/types";
 
 interface CartStore {
-  items: Pizza[];
+  items: Pizza[]
   addItem: (data: Pizza) => void;
   removeItem: (id: string) => void;
   updateItem: (updatedItem: Pizza) => void;
@@ -19,18 +19,26 @@ const useCart = create(
         const existingItemIndex = currentItems.findIndex(
           (item) =>
             item.size === data.size &&
-            JSON.stringify(item.toppings.sort()) ===
-              JSON.stringify(data.toppings.sort()),
+            JSON.stringify(item.toppings.sort()) === JSON.stringify(data.toppings.sort())
         );
 
-        const newItem: Pizza = { ...data, quantity: 1 };
-        set({ items: [...currentItems, newItem] });
+        if (existingItemIndex !== -1) {
+          const existingItem = currentItems[existingItemIndex];
+          if (existingItem) {
+            existingItem.quantity += 1;
+            set({ items: [...currentItems] });
+          }
+        } else {
+          const newItem: Pizza = { ...data, quantity: 1 };
+          set({ items: [...currentItems, newItem] });
+        }
+
       },
       removeItem: (id: string) => {
         set({
           items: [
             ...get().items.filter(
-              (item) => item.id.toString() !== id.toString(),
+              (item) => item.id.toString() !== id.toString()
             ),
           ],
         });
@@ -50,8 +58,8 @@ const useCart = create(
     {
       name: "cart-storage",
       storage: createJSONStorage(() => localStorage),
-    },
-  ),
+    }
+  )
 );
 
 export default useCart;
