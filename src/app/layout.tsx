@@ -1,10 +1,11 @@
 import "@/styles/globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { dark } from "@clerk/themes";
+import { cn } from "@/lib/utils";
 
-import { Inter } from "next/font/google";
+import { Inter as FontSans } from "next/font/google";
 
-const inter = Inter({
+export const fontSans = FontSans({
   subsets: ["latin"],
   variable: "--font-sans",
 });
@@ -27,7 +28,14 @@ export default function RootLayout({
       }}
     >
       <html lang="en">
-        <body className={`font-sans ${inter.variable}`}>{children}</body>
+        <body
+          className={cn(
+            "bg-background min-h-screen font-sans antialiased",
+            fontSans.variable,
+          )}
+        >
+          {children}
+        </body>
       </html>
     </ClerkProvider>
   );
