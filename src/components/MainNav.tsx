@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { currentUser, SignInButton, SignOutButton } from "@clerk/nextjs";
 import { UserButton } from "@clerk/nextjs";
 import { Button } from "./ui/button";
+import CartButton from "./CartButton";
 
 export async function MainNav({
   className,
@@ -42,6 +43,7 @@ export async function MainNav({
           Account
           
         </Link>
+        <CartButton />
       </nav>
     </div>
   );
