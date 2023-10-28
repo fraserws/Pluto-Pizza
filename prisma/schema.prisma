@@ -10,11 +10,30 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
-model Post {
-    id        Int      @id @default(autoincrement())
-    name      String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
 
-    @@index([name])
+model Pizza {
+  id         Int       @id @default(autoincrement())
+  quantity   Int
+  size       String
+  toppings   String
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  order      Order?    @relation(fields: [orderId], references: [id]) // Define the relation
+  price      Float
+  orderId    Int?      // This field is used for the relation
+}
+
+
+model Order {
+  id          Int        @id @default(autoincrement())
+  userId      String
+  status     String     @default("created")
+  orderNumber String
+  pizzas      Pizza[]
+  totalPrice  Float
+  notes       String?
+  address     String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
 }

@@ -1,6 +1,7 @@
 import "@/styles/globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { dark } from "@clerk/themes";
+import { Toaster } from "sonner";
 import { cn } from "@/lib/utils";
 
 import { Inter as FontSans } from "next/font/google";
@@ -38,6 +39,7 @@ export default function RootLayout({
           <MainNav />
           {children}
         </body>
+        <Toaster />
       </html>
     </ClerkProvider>
   );

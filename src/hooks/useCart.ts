@@ -1,9 +1,10 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
+import { toast } from "sonner";
 import { Pizza } from "@/types";
 
 interface CartStore {
-  items: Pizza[]
+  items: Pizza[];
   addItem: (data: Pizza) => void;
   removeItem: (id: string) => void;
   updateItem: (updatedItem: Pizza) => void;
@@ -19,7 +20,8 @@ const useCart = create(
         const existingItemIndex = currentItems.findIndex(
           (item) =>
             item.size === data.size &&
-            JSON.stringify(item.toppings.sort()) === JSON.stringify(data.toppings.sort())
+            JSON.stringify(item.toppings.sort()) ===
+              JSON.stringify(data.toppings.sort()),
         );
 
         if (existingItemIndex !== -1) {
@@ -33,15 +35,17 @@ const useCart = create(
           set({ items: [...currentItems, newItem] });
         }
 
+        toast.success("Item added to cart.");
       },
       removeItem: (id: string) => {
         set({
           items: [
             ...get().items.filter(
-              (item) => item.id.toString() !== id.toString()
+              (item) => item.id.toString() !== id.toString(),
             ),
           ],
         });
+        toast.error("Item removed from cart.");
       },
       updateItem: (updatedItem: Pizza) => {
         set({
@@ -52,14 +56,15 @@ const useCart = create(
             return item;
           }),
         });
+        toast.success("Item updated in cart.");
       },
       removeAll: () => set({ items: [] }),
     }),
     {
       name: "cart-storage",
       storage: createJSONStorage(() => localStorage),
-    }
-  )
+    },
+  ),
 );
 
 export default useCart;
