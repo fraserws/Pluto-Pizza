@@ -1,47 +1,46 @@
 "use client";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import useCart from "@/hooks/useCart";
-import { XIcon } from "lucide-react";
-import { AnimatePresence, motion } from "framer-motion";
 
-export default function Cart() {
+import { useEffect, useState } from "react";
+
+import useCart from "@/hooks/useCart";
+import CartItem from "./CartItem";
+import QuantityPicker from "@/components/QuantityPicker";
+import Summary from "./Summary";
+
+export const revalidate = 0;
+
+const CartPage = () => {
+  const [isMounted, setIsMounted] = useState(false);
   const cart = useCart();
 
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) {
+    return null;
+  }
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center">
-      <h1 className="text-center text-4xl font-bold text-primary">
-        Cart
-      </h1>
-      <Button className="mt-4">
-        <Link href="/order">Order Now</Link>
-      </Button>
-      <div>
-        <h2>Cart</h2>
-        <ul>
-          <AnimatePresence>
-            {cart.items.map((item) => (
-              <motion.li
-                key={item.id}
-                initial={{ opacity: 0, x: -100 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 100 }} 
-                transition={{ type: "spring", stiffness: 900, damping: 40 }}
-              >
-                {item.quantity} {item.size} {item.toppings.join(", ")} - £{" "}
-                {item.price.toFixed(2)}
-                <Button
-                  onClick={() => {
-                    cart.removeItem(item.id.toString());
-                  }}
-                >
-                  <XIcon />
-                </Button>
-              </motion.li>
-            ))}
-          </AnimatePresence>
-        </ul>
+    <div className="bg-white">
+      <div className="px-4 py-16 sm:px-6 lg:px-8">
+        <h1 className="text-3xl font-bold text-black">Shopping Cart</h1>
+        <div className="mt-12 gap-x-12 lg:grid lg:grid-cols-12 lg:items-start">
+          <div className="lg:col-span-7 ">
+            {cart.items.length === 0 && (
+              <p className="text-neutral-500">No items added to cart.</p>
+            )}
+            <ul>
+              {cart.items.map((item) => (
+                <CartItem key={item.id} data={item} />
+              ))}
+            </ul>
+          </div>
+          <Summary />
+        </div>
       </div>
-    </main>
+    </div>
   );
-}
+};
+
+export default CartPage;

@@ -13,6 +13,8 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { Toggle } from "@/components/ui/toggle";
+import OrderPreview from "@/components/PizzaPreview";
+import PizzaPreview from "@/components/PizzaPreview";
 
 const pizzaSizes = [
   { size: "Small", price: 6.99 },
@@ -41,7 +43,7 @@ const OrderPage = () => {
     size: "Small",
     toppings: [],
     price: 6.99,
-    quantity: 1,
+    quantity: 1, // Initialize quantity to 1
   });
   const cart = useCart();
 
@@ -58,6 +60,7 @@ const OrderPage = () => {
   }, [cart]);
 
   const handleToppingToggle = (topping: string) => {
+    // Check if the topping is already selected, and toggle its selection.
     if (pizza.toppings.includes(topping)) {
       setPizza((prevPizza) => ({
         ...prevPizza,
@@ -85,24 +88,38 @@ const OrderPage = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    // Handle order submission if needed.
   };
 
-  const addPizzaToCart = () => {
-    cart.addItem(pizza);
-    setPizza({
-      id: Math.floor(Math.random() * 1000000),
-      size: "Small",
-      toppings: [],
-      price: 6.99,
-      quantity: 1,
-    });
+const handleQuantityChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const newQuantity = parseInt(event.target.value, 10);
+  if (!isNaN(newQuantity) && newQuantity >= 1) {
+    setPizza((prevPizza) => ({
+      ...prevPizza,
+      quantity: newQuantity,
+    }));
+  }
+};
+const addPizzaToCart = () => {
+  const pizzaToAdd = {
+    ...pizza,
+    quantity: pizza.quantity, // Use the selected quantity
   };
+  cart.addItem(pizzaToAdd);
+  setPizza({
+    id: Math.floor(Math.random() * 1000000),
+    size: "Small",
+    toppings: [],
+    price: 6.99,
+    quantity: 1,
+  });
+};
 
   return (
-    <div className="flex h-full flex-col gap-4 px-4 pt-20 md:flex-row">
+    <div className="flex h-full flex-col gap-4 pl-4 pt-20 md:flex-row">
       <Card className="w-full md:w-[50%]">
         <CardHeader>
-          <CardTitle>Customise Pizza</CardTitle>
+          <CardTitle>Customize Pizza</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="flex w-full flex-col">
@@ -142,28 +159,35 @@ const OrderPage = () => {
                 </Toggle>
               ))}
             </div>
+            <label>Quantity:</label>
+            <input
+              type="number"
+              value={pizza.quantity}
+              onChange={handleQuantityChange}
+              min="1"
+            />
             <label>Price:</label>
-            <span> £{pizza.price.toFixed(2)}</span>
+            <span> £{(pizza.price * pizza.quantity).toFixed(2)}</span>
           </form>
         </CardContent>
-        <CardFooter className="flex w-full flex-col items-center gap-2">
-          <Button className="w-full" type="button" onClick={addPizzaToCart}>
-            Add to Cart
+        <CardFooter>
+          <Button type="button" onClick={addPizzaToCart}>
+            Add Pizza to Cart
           </Button>
           <Button
-            variant="outline"
             type="button"
-            className="w-full"
             onClick={() => {
               addPizzaToCart();
               router.push("/cart");
             }}
           >
-            Add To Cart & Checkout
+            Add Pizza to Cart and Checkout
           </Button>
         </CardFooter>
       </Card>
-      <div className="flex w-full items-center justify-center md:w-[50%]"></div>
+      <div className="flex w-full items-center justify-center md:w-[50%]">
+        <PizzaPreview size={pizza.size} />
+      </div>
     </div>
   );
 };

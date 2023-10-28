@@ -48,14 +48,40 @@ const useCart = create(
         toast.error("Item removed from cart.");
       },
       updateItem: (updatedItem: Pizza) => {
-        set({
-          items: get().items.map((item) => {
-            if (item.id === updatedItem.id) {
-              return updatedItem;
-            }
-            return item;
-          }),
-        });
+        //check if there is already an item with the same size and toppings
+        const currentItems = get().items;
+        const existingItemIndex = currentItems.findIndex(
+          (item) =>
+            item.size === updatedItem.size &&
+            JSON.stringify(item.toppings.sort()) ===
+              JSON.stringify(updatedItem.toppings.sort()),
+        );
+
+        //if there is an existing item, update the quantity
+        if (existingItemIndex !== -1) {
+          console.log("existing item");
+          const existingItem = currentItems[existingItemIndex];
+          if (existingItem) {
+            existingItem.quantity += updatedItem.quantity;
+            set({ items: [...currentItems] });
+            set({
+              items: [
+                ...get().items.filter(
+                  (item) => item.id.toString() !== updatedItem.id.toString(),
+                ),
+              ],
+            });
+          }
+        } else {
+          set({
+            items: get().items.map((item) => {
+              if (item.id === updatedItem.id) {
+                return updatedItem;
+              }
+              return item;
+            }),
+          });
+        }
         toast.success("Item updated in cart.");
       },
       removeAll: () => set({ items: [] }),
