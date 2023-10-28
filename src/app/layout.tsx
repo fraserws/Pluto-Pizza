@@ -4,6 +4,7 @@ import { dark } from "@clerk/themes";
 import { cn } from "@/lib/utils";
 
 import { Inter as FontSans } from "next/font/google";
+import { MainNav } from "@/components/MainNav";
 
 export const fontSans = FontSans({
   subsets: ["latin"],
@@ -34,6 +35,7 @@ export default function RootLayout({
             fontSans.variable,
           )}
         >
+          <MainNav />
           {children}
         </body>
       </html>
