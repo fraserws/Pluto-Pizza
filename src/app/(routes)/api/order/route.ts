@@ -81,12 +81,14 @@ export async function GET(req: Request) {
       where: {
         userId: user.id,
       },
+      orderBy: {
+        createdAt: "desc",
+      },
     });
 
     if (!orders) {
       return new Response("Order not found", { status: 404 });
     }
-    console.log(orders);
     return NextResponse.json({ orders });
   } catch (error) {
     console.error("Error fetching orders:", error);
