@@ -19,6 +19,7 @@ Nextjs, Zustand, Prisma, Planetscale, Tailwind, ShadcnUI
 - [ ] Move toppings to db with quantities
 - [ ] Add presets for pizza
 - [ ] Assign orders to drivers
+- [ ] Improve Naming
 - [ ] Add tests 
 
 
