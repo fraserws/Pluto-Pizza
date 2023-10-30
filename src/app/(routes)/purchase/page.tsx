@@ -13,7 +13,6 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { Toggle } from "@/components/ui/toggle";
-import OrderPreview from "@/components/PizzaPreview";
 import PizzaPreview from "@/components/PizzaPreview";
 
 const pizzaSizes = [
@@ -43,7 +42,7 @@ const OrderPage = () => {
     size: "Small",
     toppings: [],
     price: 6.99,
-    quantity: 1, // Initialize quantity to 1
+    quantity: 1,
   });
   const cart = useCart();
 
@@ -51,16 +50,12 @@ const OrderPage = () => {
     setPizza((prevPizza) => ({
       ...prevPizza,
       size,
+
       price: calculatePizzaPrice(size, prevPizza.toppings),
     }));
   }, []);
 
-  useEffect(() => {
-    console.log("cart", cart.items);
-  }, [cart]);
-
   const handleToppingToggle = (topping: string) => {
-    // Check if the topping is already selected, and toggle its selection.
     if (pizza.toppings.includes(topping)) {
       setPizza((prevPizza) => ({
         ...prevPizza,
@@ -88,32 +83,23 @@ const OrderPage = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle order submission if needed.
   };
 
-const handleQuantityChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  const newQuantity = parseInt(event.target.value, 10);
-  if (!isNaN(newQuantity) && newQuantity >= 1) {
-    setPizza((prevPizza) => ({
-      ...prevPizza,
-      quantity: newQuantity,
-    }));
-  }
-};
-const addPizzaToCart = () => {
-  const pizzaToAdd = {
-    ...pizza,
-    quantity: pizza.quantity, // Use the selected quantity
+  const handleQuantityChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newQuantity = parseInt(event.target.value, 10);
+    if (!isNaN(newQuantity) && newQuantity >= 1) {
+      setPizza((prevPizza) => ({
+        ...prevPizza,
+        quantity: newQuantity,
+      }));
+    }
   };
-  cart.addItem(pizzaToAdd);
-  setPizza({
-    id: Math.floor(Math.random() * 1000000),
-    size: "Small",
-    toppings: [],
-    price: 6.99,
-    quantity: 1,
-  });
-};
+  const addPizzaToCart = () => {
+    const pizzaToAdd = {
+      ...pizza,
+    };
+    cart.addItem(pizzaToAdd);
+  };
 
   return (
     <div className="flex h-full flex-col gap-4 pl-4 pt-20 md:flex-row">

@@ -12,7 +12,7 @@ export async function MainNav({
 }: React.HTMLAttributes<HTMLElement>) {
   const user = await currentUser();
   return (
-    <div className=" flex  flex-col justify-center h-16 gap-12 border-b">
+    <div className=" flex  h-16 flex-col justify-center gap-12 border-b">
       <nav
         className={cn(
           "flex items-center space-x-4 px-3 lg:space-x-6 ",
@@ -31,17 +31,16 @@ export async function MainNav({
           <h3 className="text-xl font-bold text-primary">Plutos Pizza</h3>
         </Link>
         <Link
-          href="/order"
+          href="/purchase"
           className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
         >
           Order
         </Link>
         <Link
-          href="/account"
+          href="/orders"
           className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
         >
-          Account
-          
+          History
         </Link>
         <CartButton />
       </nav>

@@ -34,8 +34,6 @@ export function Pizza(props: JSX.IntrinsicElements["group"]) {
   );
 }
 
-
-
 useGLTF.preload("/pizza.glb");
 
 export default function PizzaPreview({ size }: { size: string }) {
@@ -50,11 +48,11 @@ export default function PizzaPreview({ size }: { size: string }) {
 
   function getScaleForSize(size: string) {
     if (size === "Small") {
-      return 1.5; // Adjust scale for a small pizza
+      return 1.5;
     } else if (size === "Large") {
-      return 1.8; // Adjust scale for a large pizza
+      return 1.8;
     } else {
-      return 1.65; // Default scale for a medium pizza
+      return 1.65;
     }
   }
 }

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import {  PrismaClient } from "@prisma/client";
 import { currentUser } from "@clerk/nextjs";
 
 const prisma = new PrismaClient();
@@ -20,7 +20,6 @@ export async function GET(
   }
 
   try {
-    // Fetch the order by its ID
     const order = await prisma.order.findUnique({
       where: {
         id: id,

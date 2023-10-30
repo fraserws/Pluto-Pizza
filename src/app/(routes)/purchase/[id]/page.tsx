@@ -42,7 +42,7 @@ export default function Page({ params }: { params: { id: string } }) {
 
   useEffect(() => {
     const cartItem = cart.items.find((item) => item.id === Number(params.id));
-    setPizza(cartItem || null);
+    setPizza(cartItem ?? null);
   }, [cart, params.id]);
 
   const handlePizzaChange = (size: string, price: number) => {
@@ -83,19 +83,13 @@ export default function Page({ params }: { params: { id: string } }) {
     }
   };
 
-  const handleQuantityChange = (action: "increase" | "decrease") => {
-    if (pizza) {
-      if (action === "increase") {
-        setPizza((prevPizza) => ({
-          ...prevPizza!,
-          quantity: prevPizza!.quantity + 1,
-        }));
-      } else if (action === "decrease" && pizza.quantity > 1) {
-        setPizza((prevPizza) => ({
-          ...prevPizza!,
-          quantity: prevPizza!.quantity - 1,
-        }));
-      }
+  const handleQuantityChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newQuantity = parseInt(event.target.value, 10);
+    if (!isNaN(newQuantity) && newQuantity >= 1) {
+      setPizza((prevPizza) => ({
+        ...prevPizza!,
+        quantity: newQuantity,
+      }));
     }
   };
 
@@ -159,6 +153,12 @@ export default function Page({ params }: { params: { id: string } }) {
                   </Toggle>
                 ))}
               </div>
+              <input
+                type="number"
+                value={pizza.quantity}
+                onChange={handleQuantityChange}
+                min="1"
+              />
               <label>Price:</label>
               <span>£{(pizza.price * pizza.quantity).toFixed(2)}</span>
               <Button type="submit">Update Pizza</Button>

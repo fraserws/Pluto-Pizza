@@ -1,96 +1,92 @@
 import { NextResponse } from "next/server";
+import { currentUser } from "@clerk/nextjs";
 import { PrismaClient } from "@prisma/client";
-import calculatePizzaPrice from "@/utils/calculatePrice";
+import { Pizza } from "@/types";
+
 const prisma = new PrismaClient();
-import { currentUser } from '@clerk/nextjs';
 
-type PizzaData = {
-  size: string;
-  toppings: string[];
-  price: string;
-};
-
-type OrderData = {
+interface OrderData {
   userId: string;
-  pizzas: PizzaData[];
-  totalPrice: number; 
-};
-
-function generateOrderNumber() {
-  const timestamp = Date.now();
-  const randomSuffix = Math.floor(Math.random() * 1000);
-  return `ORDER-${timestamp}-${randomSuffix}`;
+  items: Pizza[];
+  totalPrice: number;
 }
 
-function calculateTotalPrice(pizzas: PizzaData[]) {
-  return pizzas.reduce((total, pizza) => {
-    return (
-      Math.round(
-        (total + calculatePizzaPrice(pizza.size, pizza.toppings)) * 100,
-      ) / 100
-    );
+function calculateOrderTotal(items: Pizza[]): number {
+  return items.reduce((total, pizza) => {
+    return total + pizza.price * pizza.quantity;
   }, 0);
 }
 
-export async function GET(request: Request) {
+export async function POST(request: Request) {
+  const user = await currentUser();
+  const orderNumber = Math.floor(Math.random() * 1000000).toString();
+
+  if (!user) {
+    return new Response("Unauthorized", { status: 401 });
+  }
+
+  try {
+    const formData: OrderData = (await request.json()) as OrderData;
+
+    const total = calculateOrderTotal(formData.items);
+
+    const orderData: OrderData = {
+      userId: user.id,
+      items: formData.items,
+      totalPrice: total,
+    };
+
+    const validatedPrice = calculateOrderTotal(orderData.items);
+
+    const order = await prisma.order.create({
+      data: {
+        userId: orderData.userId,
+        orderNumber: orderNumber,
+        totalPrice: validatedPrice,
+        address: "test",
+        pizzas: {
+          create: orderData.items.map((pizzaData) => ({
+            size: pizzaData.size,
+            toppings: pizzaData.toppings.join(", "),
+            price: pizzaData.price,
+            quantity: pizzaData.quantity,
+          })),
+        },
+      },
+    });
+
+    await prisma.$disconnect();
+
+    return NextResponse.json({ order: order });
+  } catch (error) {
+    console.error("Error creating order:", error);
+    return new Response("Error creating order", { status: 500 });
+  }
+}
+
+export async function GET(req: Request) {
   const user = await currentUser();
 
   if (!user) {
     return new Response("Unauthorized", { status: 401 });
   }
 
-
   try {
-    const mockPizzaData: PizzaData[] = [
-      {
-        size: "Medium",
-        toppings: ["pepperoni", "mushrooms"],
-        price: "12.99",
-      },
-      {
-        size: "Large",
-        toppings: ["sausage", "onions", "green peppers"],
-        price: "16.99",
-      },
-    ];
-
-    const orderData: OrderData = {
-      userId : user.id,
-      pizzas: mockPizzaData,
-      totalPrice: calculateTotalPrice(mockPizzaData),
-    };
-
-    const orderNumber = generateOrderNumber();
-
-    const order = await prisma.order.create({
-      data: {
-        userId: orderData.userId,
-        totalPrice: orderData.totalPrice,
-        orderNumber: orderNumber,
-        address: "123 Main St",
+    const orders = await prisma.order.findMany({
+      where: {
+        userId: user.id,
       },
     });
 
-    const pizzas = await Promise.all(
-      orderData.pizzas.map(async (pizzaData) => {
-        const pizza = await prisma.pizza.create({
-          data: {
-            size: pizzaData.size,
-            toppings: pizzaData.toppings.join(","),
-            price: parseFloat(pizzaData.price),
-            orderId: order.id,
-            quantity: 1,
-          },
-        });
-        return pizza;
-      }),
-    );
+    if (!orders) {
+      return new Response("Order not found", { status: 404 });
+    }
 
-    await prisma.$disconnect();
-
-    return NextResponse.json({ order, pizzas });
+    return NextResponse.json({ orders });
   } catch (error) {
-    console.error("Error creating order:", error);
-    return new Response("Error creating order", { status: 500 });
+    console.error("Error fetching orders:", error);
+    return new Response("Error fetching orders", { status: 500 });
+  } finally {
+    await prisma.$disconnect();
   }
 }

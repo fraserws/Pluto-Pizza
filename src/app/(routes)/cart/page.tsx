@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 
 import useCart from "@/hooks/useCart";
 import CartItem from "./CartItem";
-import QuantityPicker from "@/components/QuantityPicker";
 import Summary from "./Summary";
 
 export const revalidate = 0;
