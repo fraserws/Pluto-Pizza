@@ -1,8 +1,6 @@
 
 # Pluto's Pizza
 
-A brief description of what this project does and who it's for
-
 
 ## Demo
 
