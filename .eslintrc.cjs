@@ -18,7 +18,10 @@ const config = {
     "@typescript-eslint/consistent-type-definitions": "off",
     //this is due to fetching with useEffect I would fix by using react query instead
     "@typescript-eslint/no-unsafe-assignment": "off",
-    
+    //bug in shadcnui
+    "@typescript-eslint/no-empty-interface": "off",
+
+
 
     "@typescript-eslint/consistent-type-imports": [
       "warn",

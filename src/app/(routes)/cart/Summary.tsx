@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import React, { useState } from "react";
+import { useRouter} from "next/navigation";
 import useCart from "@/hooks/useCart";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Loader2Icon } from "lucide-react";
 import { Pizza, Order } from "@/types";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 interface Response {
   order: Order;
@@ -17,6 +19,8 @@ const Summary = () => {
   const router = useRouter();
   const cart = useCart();
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [address, setAddress] = useState<string>("");
+  const [notes, setNotes] = useState<string>("");
 
   const totalPrice = items.reduce((total, item) => {
     return total + item.price * item.quantity;
@@ -25,9 +29,17 @@ const Summary = () => {
   const handleCheckout = async () => {
     setIsLoading(true);
 
+    if (!address) {
+      toast.error("Address is required");
+      setIsLoading(false);
+      return;
+    }
+
     const orderData = {
       items: items,
       total: totalPrice,
+      address: address,
+      notes: notes,
     };
 
     try {
@@ -55,38 +67,54 @@ const Summary = () => {
 
   return (
     <div className="mt-16 rounded-lg bg-gray-50 px-4 py-6 sm:p-6 lg:col-span-5 lg:mt-0 lg:p-8">
-      <h2 className="text-lg font-medium text-gray-900">Order summary</h2>
-      <div className="mt-6 space-y-4">
-        {items.map((item: Pizza) => (
-          <div key={item.id} className="flex items-center justify-between">
-            <div className="text-base font-medium text-gray-900">
-              {item.size} Pizza
+      <form className="flex flex-col gap-4">
+        <h2 className="text-lg font-medium text-gray-900">Order summary</h2>
+        <div className="mt-6 space-y-4">
+          {items.map((item: Pizza) => (
+            <div key={item.id} className="flex items-center justify-between">
+              <div className="text-base font-medium text-gray-900">
+                {item.size} Pizza
+              </div>
+              <div className="text-base font-medium text-gray-900">
+                £{(item.price * item.quantity).toFixed(2)}
+              </div>
             </div>
+          ))}
+          <div className="flex items-center justify-between border-t border-gray-200 pt-4">
+            <div className="text-base font-medium text-gray-900">Order total</div>
             <div className="text-base font-medium text-gray-900">
-              £{(item.price * item.quantity).toFixed(2)}
+              £{totalPrice.toFixed(2)}
             </div>
           </div>
-        ))}
-        <div className="flex items-center justify-between border-t border-gray-200 pt-4">
-          <div className="text-base font-medium text-gray-900">Order total</div>
-          <div className="text-base font-medium text-gray-900">
-            £{totalPrice.toFixed(2)}
+          <Input
+            placeholder="Address"
+            type="text"
+            name="address"
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+            required
+          />
+          <Textarea
+            placeholder="Notes"
+            name="notes"
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+          />
+        </div>
+        {isLoading ? (
+          <div className="mt-6 flex justify-center">
+            <Loader2Icon className="h-6 w-6 animate-spin" />
           </div>
-        </div>
-      </div>
-      {isLoading ? (
-        <div className="mt-6 flex justify-center">
-          <Loader2Icon className="h-6 w-6 animate-spin" />
-        </div>
-      ) : (
-        <Button
-          disabled={items.length === 0}
-          className="mt-6 w-full"
-          onClick={handleCheckout}
-        >
-          Checkout
-        </Button>
-      )}
+        ) : (
+          <Button
+            disabled={items.length === 0}
+            className="mt-6 w-full"
+            onClick={handleCheckout}
+          >
+            Checkout
+          </Button>
+        )}
+      </form>
     </div>
   );
 };

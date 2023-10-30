@@ -8,6 +8,8 @@ const prisma = new PrismaClient();
 interface OrderData {
   userId: string;
   items: Pizza[];
+  address: string;
+  notes?: string;
   totalPrice: number;
 }
 
@@ -33,6 +35,8 @@ export async function POST(request: Request) {
     const orderData: OrderData = {
       userId: user.id,
       items: formData.items,
+      address: formData.address,
+      notes: formData.notes,
       totalPrice: total,
     };
 
@@ -43,7 +47,8 @@ export async function POST(request: Request) {
         userId: orderData.userId,
         orderNumber: orderNumber,
         totalPrice: validatedPrice,
-        address: "test",
+        notes: orderData.notes,
+        address: orderData.address,
         pizzas: {
           create: orderData.items.map((pizzaData) => ({
             size: pizzaData.size,
@@ -81,7 +86,7 @@ export async function GET(req: Request) {
     if (!orders) {
       return new Response("Order not found", { status: 404 });
     }
-
+    console.log(orders);
     return NextResponse.json({ orders });
   } catch (error) {
     console.error("Error fetching orders:", error);

@@ -4,7 +4,7 @@ import { Loader2Icon } from "lucide-react";
 import { Order, Pizza } from "@/types";
 
 interface Response {
-  order: Order[];
+  orders: Order[];
   pizzas: Pizza[];
 }
 export default function Page({ params }: { params: { id: string } }) {
@@ -36,7 +36,7 @@ export default function Page({ params }: { params: { id: string } }) {
       <h1 className="text-center text-6xl font-bold">Orders</h1>
       {data ? (
         <div className="border-1 flex flex-col items-center justify-center gap-4">
-          {data.order.map((order: Order, index: number) => (
+          {data.orders.map((order: Order, index: number) => (
             <div key={index}>
               <h2 className="text-center text-5xl font-bold">
                 Order #{order.orderNumber}
