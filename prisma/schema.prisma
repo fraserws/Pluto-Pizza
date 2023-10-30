@@ -12,29 +12,30 @@ generator client {
 }
 
 model Pizza {
-  id        Int      @id @default(autoincrement())
+  id        Int       @id @default(autoincrement())
   quantity  Int
-  price     Decimal  @db.Decimal(9, 2)
+  price     Decimal   @db.Decimal(9, 2)
   size      String
   toppings  String
   createdAt DateTime? @default(now())
   updatedAt DateTime? @updatedAt
-  order     Order?   @relation(fields: [orderId], references: [id])
-  orderId   Int? 
+  order     Order?    @relation(fields: [orderId], references: [id])
+  orderId   Int?
 
   @@index([orderId])
 }
 
 model Order {
-  id          Int      @id @default(autoincrement())
+  id          Int       @id @default(autoincrement())
   userId      String
   status      String?   @default("created")
   orderNumber String
   pizzas      Pizza[]
-  totalPrice  Decimal  @db.Decimal(9, 2)
+  totalPrice  Decimal   @db.Decimal(9, 2)
   notes       String?
   address     String
   deliveredAt DateTime?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  driverId     String    @default(uuid())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }

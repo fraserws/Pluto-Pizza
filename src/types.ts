@@ -14,6 +14,7 @@ export interface Order {
   totalPrice: number;
   notes: string | null;
   address: string;
+  driverId: string | null;
   deliveredAt: Date | null;
   createdAt: Date;
   updatedAt: Date;

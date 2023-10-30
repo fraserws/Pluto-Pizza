@@ -57,6 +57,7 @@ export default function Page({ params }: { params: { id: string } }) {
           <h2 className="text-3xl">Status: {data.order.status}</h2>
 
           <h3 className="text-2xl">Total: £{data.order.totalPrice}</h3>
+          <p className="text-xl">Driver ID {data.order.driverId}</p>
         </div>
       ) : (
         <div className="flex w-full justify-center">
